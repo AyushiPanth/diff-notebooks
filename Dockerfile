@@ -1,13 +1,13 @@
-# Use a base image that includes Chromium and ChromeDriver
-FROM selenium/standalone-chromium:4.0.0-beta-1
+# Use a base image that includes Chromium
+FROM microsoft/edge-dev
 
 # Set the working directory
 WORKDIR /app
 
 # Install Python and other dependencies
-RUN sudo apt-get update && \
-    sudo apt-get install -y python3-pip && \
-    sudo apt-get clean
+RUN apt-get update && \
+    apt-get install -y python3-pip && \
+    apt-get clean
 
 # Install nbdiff-web-exporter
 RUN pip3 install nbdime[notebook]
