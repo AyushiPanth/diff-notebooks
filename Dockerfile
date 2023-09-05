@@ -1,24 +1,22 @@
-FROM python:3.9
+# Use a base image that includes Chromium and ChromeDriver
+FROM selenium/standalone-chromium:4.0.0-beta-1
 
-# install chrome driver
-RUN /bin/bash -c 'wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb http://dl.google.com/linux/chrome/deb/ stable main" | tee -a /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update -qqy && \
-    apt-get -qqy install google-chrome-stable && \
-    CHROME_VERSION=$(google-chrome-stable --version) && \
-    CHROME_FULL_VERSION=${CHROME_VERSION%%.*} && \
-    CHROME_MAJOR_VERSION=${CHROME_FULL_VERSION//[!0-9]} && \
-    rm /etc/apt/sources.list.d/google-chrome.list && \
-    export CHROMEDRIVER_VERSION=`curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_MAJOR_VERSION%%.*}` && \
-    curl -L -O "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" && \
-    unzip chromedriver_linux64.zip && chmod +x chromedriver && mv chromedriver /usr/local/bin && \
-    chromedriver --version'
+# Set the working directory
+WORKDIR /app
 
-# install nbdiff-web-exporter
-RUN pip install git+https://github.com/kuromt/nbdiff-web-exporter
+# Install Python and other dependencies
+RUN sudo apt-get update && \
+    sudo apt-get install -y python3-pip && \
+    sudo apt-get clean
 
-COPY entrypoint.sh /entrypoint.sh
+# Install nbdiff-web-exporter
+RUN pip3 install nbdime[notebook]
 
-RUN chmod +x /entrypoint.sh
+# Copy your entrypoint script to the container
+COPY entrypoint.sh /app/entrypoint.sh
 
-ENTRYPOINT ["/entrypoint.sh"]
+# Make the entrypoint script executable
+RUN chmod +x /app/entrypoint.sh
+
+# Specify the entrypoint for the container
+CMD ["/app/entrypoint.sh"]
