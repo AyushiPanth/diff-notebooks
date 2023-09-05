@@ -1,12 +1,12 @@
-# Use a base image that includes Chromium
-FROM microsoft/edge-dev
+# Use the Ubuntu base image
+FROM ubuntu:latest
 
 # Set the working directory
 WORKDIR /app
 
-# Install Python and other dependencies
+# Install necessary packages, including Chromium
 RUN apt-get update && \
-    apt-get install -y python3-pip && \
+    apt-get install -y chromium-browser python3-pip && \
     apt-get clean
 
 # Install nbdiff-web-exporter
