@@ -14,7 +14,6 @@ jobs:
         uses: ./ # Uses an action in the root directory
         id: diff-notebooks
         with:
-          remote: "origin/test-data"
           export_dir: "./artifacts"
       - uses: actions/upload-artifact@v2
         with:
